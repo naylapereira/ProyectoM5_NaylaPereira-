@@ -3,10 +3,11 @@ import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth/hooks/useAuth";
 
-function LoginPage() {
-  const { login, loginWithGoogle } = useAuth();
+function RegisterPage() {
+  const { register, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -16,10 +17,10 @@ function LoginPage() {
     setError("");
 
     try {
-      await login(email, password);
+      await register(email, password, displayName);
       navigate("/");
     } catch {
-      setError("Correo o contraseña incorrectos.");
+      setError("No se pudo crear la cuenta.");
     }
   };
 
@@ -34,9 +35,16 @@ function LoginPage() {
 
   return (
     <main>
-      <h1>Iniciar sesión</h1>
+      <h1>Crear cuenta</h1>
 
       <form onSubmit={handleSubmit}>
+        <input
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
+          placeholder="Nombre"
+          required
+        />
+
         <input
           type="email"
           value={email}
@@ -53,7 +61,7 @@ function LoginPage() {
           required
         />
 
-        <button type="submit">Ingresar</button>
+        <button type="submit">Registrarse</button>
       </form>
 
       <button type="button" onClick={handleGoogle}>
@@ -63,10 +71,10 @@ function LoginPage() {
       {error && <p>{error}</p>}
 
       <p>
-        ¿No tenés cuenta? <Link to="/register">Registrarse</Link>
+        ¿Ya tenés cuenta? <Link to="/login">Iniciar sesión</Link>
       </p>
     </main>
   );
 }
 
-export default LoginPage;
+export default RegisterPage;
