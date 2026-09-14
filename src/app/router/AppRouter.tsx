@@ -8,6 +8,7 @@ import LoginPage from "../../pages/LoginPage";
 import NotFoundPage from "../../pages/NotFoundPage";
 import RegisterPage from "../../pages/RegisterPage";
 import AdminPage from "../../pages/AdminPage";
+import ProductDetailPage from "../../pages/ProductDetailPage";
 
 function AppRouter() {
   return (
@@ -18,6 +19,11 @@ function AppRouter() {
       <Route element={<ProtectedRoute />}>
         <Route element={<CustomerLayout />}>
           <Route path="/" element={<HomePage />} />
+          
+          <Route
+            path="/products/:productId"
+            element={<ProductDetailPage />}
+          />
         </Route>
       </Route>
 
