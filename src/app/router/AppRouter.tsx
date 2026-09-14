@@ -1,16 +1,33 @@
 import { Route, Routes } from "react-router-dom";
+import AdminRoute from "../../features/auth/components/AdminRoute";
+import ProtectedRoute from "../../features/auth/components/ProtectedRoute";
+import AdminLayout from "../../layouts/AdminLayout";
+import CustomerLayout from "../../layouts/CustomerLayout";
 import HomePage from "../../pages/HomePage";
 import LoginPage from "../../pages/LoginPage";
 import NotFoundPage from "../../pages/NotFoundPage";
 import RegisterPage from "../../pages/RegisterPage";
+import AdminPage from "../../pages/AdminPage";
 
 function AppRouter() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="*" element={<NotFoundPage />} />
       <Route path="/register" element={<RegisterPage />} />
+
+      <Route element={<ProtectedRoute />}>
+        <Route element={<CustomerLayout />}>
+          <Route path="/" element={<HomePage />} />
+        </Route>
+      </Route>
+
+      <Route element={<AdminRoute />}>
+        <Route element={<AdminLayout />}>
+          <Route path="/admin" element={<AdminPage />} />
+        </Route>
+      </Route>
+
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
