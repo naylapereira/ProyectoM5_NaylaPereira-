@@ -1,13 +1,22 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 
 function AdminLayout() {
+  const location = useLocation();
+
   return (
     <div>
       <header>
-        <h1>Panel de administración</h1>
+        <h1>Administración de Mundo Patitas</h1>
 
         <nav>
-          <Link to="/admin">Inicio admin</Link>
+          {location.pathname !== "/admin" && (
+            <Link to="/admin">Inicio admin</Link>
+          )}
+
+          {location.pathname !== "/admin/products" && (
+            <Link to="/admin/products">Productos</Link>
+          )}
+
           <Link to="/">Ir a la tienda</Link>
         </nav>
       </header>
