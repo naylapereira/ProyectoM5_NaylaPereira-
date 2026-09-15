@@ -1,6 +1,14 @@
 import { Link, Outlet } from "react-router-dom";
+import { useCart } from "../features/cart/hooks/useCart";
 
 function CustomerLayout() {
+  const { items } = useCart();
+
+  const totalItems = items.reduce(
+    (total, item) => total + item.quantity,
+    0,
+  );
+
   return (
     <div>
       <header>
@@ -9,6 +17,8 @@ function CustomerLayout() {
         <nav>
           <Link to="/">Inicio</Link>
         </nav>
+
+        <Link to="/cart">Carrito ({totalItems})</Link>
       </header>
 
       <main>
