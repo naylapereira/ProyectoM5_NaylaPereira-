@@ -19,6 +19,8 @@ function CustomerLayout() {
         </nav>
 
         <Link to="/cart">Carrito ({totalItems})</Link>
+
+        <Link to="/orders">Mis órdenes</Link>
       </header>
 
       <main>

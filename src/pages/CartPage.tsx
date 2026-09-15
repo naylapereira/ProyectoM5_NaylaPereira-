@@ -73,6 +73,10 @@ function CartPage() {
 
       <h3>Total: ${total}</h3>
 
+      <Link to="/checkout">
+        Continuar al checkout
+      </Link>
+
       <button type="button" onClick={clearCart}>
         Vaciar carrito
       </button>

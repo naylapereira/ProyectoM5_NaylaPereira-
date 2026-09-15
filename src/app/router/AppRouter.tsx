@@ -10,6 +10,9 @@ import RegisterPage from "../../pages/RegisterPage";
 import AdminPage from "../../pages/AdminPage";
 import ProductDetailPage from "../../pages/ProductDetailPage";
 import CartPage from "../../pages/CartPage";
+import CheckoutPage from "../../pages/CheckoutPage";
+import OrderDetailPage from "../../pages/OrderDetailPage";
+import OrdersPage from "../../pages/OrdersPage";
 
 function AppRouter() {
   return (
@@ -32,6 +35,21 @@ function AppRouter() {
           <Route
             path="/cart"
             element={<CartPage />}
+          />
+
+          <Route
+            path="/checkout"
+            element={<CheckoutPage />}
+          />
+
+          <Route
+            path="/orders/:orderId"
+            element={<OrderDetailPage />}
+          />
+
+          <Route
+            path="/orders"
+            element={<OrdersPage />}
           />
         </Route>
       </Route>
