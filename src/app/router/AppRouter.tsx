@@ -14,6 +14,7 @@ import CheckoutPage from "../../pages/CheckoutPage";
 import OrderDetailPage from "../../pages/OrderDetailPage";
 import OrdersPage from "../../pages/OrdersPage";
 import AdminProductsPage from "../../pages/admin/AdminProductsPage";
+import AdminOrdersPage from "../../pages/admin/AdminOrdersPage";
 
 function AppRouter() {
   return (
@@ -58,9 +59,15 @@ function AppRouter() {
       <Route element={<AdminRoute />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<AdminPage />} />
+
           <Route
             path="/admin/products"
             element={<AdminProductsPage />}
+          />
+
+          <Route
+            path="/admin/orders"
+            element={<AdminOrdersPage />}
           />
         </Route>
       </Route>

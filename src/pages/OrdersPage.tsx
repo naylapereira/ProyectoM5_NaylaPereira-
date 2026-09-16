@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../features/auth/hooks/useAuth";
 import { useUserOrders } from "../features/orders/hooks/useUserOrders";
+import { getOrderStatusLabel } from "../features/orders/utils/getOrderStatusLabel";
 
 function OrdersPage() {
   const { user } = useAuth();
@@ -25,7 +26,7 @@ function OrdersPage() {
       {orders.map((order) => (
         <article key={order.id}>
           <p>Fecha: {order.createdAt.toLocaleDateString()}</p>
-          <p>Estado: {order.status}</p>
+          <p>Estado: {getOrderStatusLabel(order.status)}</p>
           <p>Total: ${order.total}</p>
 
           <Link to={`/orders/${order.id}`}>

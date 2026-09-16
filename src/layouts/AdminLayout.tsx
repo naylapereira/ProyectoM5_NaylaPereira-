@@ -17,6 +17,10 @@ function AdminLayout() {
             <Link to="/admin/products">Productos</Link>
           )}
 
+          {location.pathname !== "/admin/orders" && (
+            <Link to="/admin/orders">Órdenes</Link>
+          )}
+
           <Link to="/">Ir a la tienda</Link>
         </nav>
       </header>

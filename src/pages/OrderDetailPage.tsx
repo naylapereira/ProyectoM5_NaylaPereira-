@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { useOrder } from "../features/orders/hooks/useOrder";
+import { getOrderStatusLabel } from "../features/orders/utils/getOrderStatusLabel";
 
 function OrderDetailPage() {
   const { orderId } = useParams();
@@ -22,7 +23,7 @@ function OrderDetailPage() {
       <h2>Detalle de la orden</h2>
 
       <p>Orden: {order.id}</p>
-      <p>Estado: {order.status}</p>
+      <p>Estado: {getOrderStatusLabel(order.status)}</p>
 
       {order.items.map((item) => (
         <article key={item.product.id}>
