@@ -46,12 +46,8 @@ export default async function handler(
     if (!userDoc.exists || userDoc.data()?.role !== "admin") {
       return response.status(403).json({ error: "Acceso denegado." });
     }
-  } catch (error) {
-    console.error("ERROR VERIFY TOKEN:", error);
-
-    return response.status(401).json({
-      error: "Token inválido.",
-    });
+  } catch {
+    return response.status(401).json({ error: "Token inválido." });
   }
 
   const { fileName, fileType } = request.body ?? {};
