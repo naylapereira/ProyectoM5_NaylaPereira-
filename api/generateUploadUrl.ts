@@ -1,6 +1,6 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { adminAuth, adminDb } from "./firebaseAdmin.js";
+import { getFirebaseAdmin } from "./firebaseAdmin.js";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -33,6 +33,8 @@ export default async function handler(
   }
 
   try {
+    const { adminAuth, adminDb } = await getFirebaseAdmin();
+    
     const token = authorization.replace("Bearer ", "");
     const decodedToken = await adminAuth.verifyIdToken(token);
 
@@ -44,8 +46,12 @@ export default async function handler(
     if (!userDoc.exists || userDoc.data()?.role !== "admin") {
       return response.status(403).json({ error: "Acceso denegado." });
     }
-  } catch {
-    return response.status(401).json({ error: "Token inválido." });
+  } catch (error) {
+    console.error("ERROR VERIFY TOKEN:", error);
+
+    return response.status(401).json({
+      error: "Token inválido.",
+    });
   }
 
   const { fileName, fileType } = request.body ?? {};
