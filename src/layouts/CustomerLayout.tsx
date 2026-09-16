@@ -1,11 +1,7 @@
-import {
-  Link,
-  Outlet,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth/hooks/useAuth";
 import { useCart } from "../features/cart/hooks/useCart";
+import CustomerHeader from "./CustomerHeader";
 
 function CustomerLayout() {
   const { items } = useCart();
@@ -24,33 +20,15 @@ function CustomerLayout() {
   };
 
   return (
-    <div>
-      <header>
-        <h1>Mundo Patitas</h1>
-        
-        {location.pathname === "/" && (
-          <p>¡Qué lindo verte, {user?.displayName}! 🐾</p>
-        )}
-        
-        <nav>
-          {location.pathname !== "/" && (
-            <Link to="/">Inicio</Link>
-          )}
+    <div className="min-h-screen bg-amber-50 text-stone-800">
+      <CustomerHeader
+        user={user}
+        totalItems={totalItems}
+        showGreeting={location.pathname === "/"}
+        onLogout={handleLogout}
+      />
 
-          <Link to="/cart">Carrito ({totalItems})</Link>
-          <Link to="/orders">Mis órdenes</Link>
-
-          {user?.role === "admin" && (
-            <Link to="/admin">Panel admin</Link>
-          )}
-        </nav>
-
-        <button type="button" onClick={handleLogout}>
-          Cerrar sesión
-        </button>
-      </header>
-
-      <main>
+      <main className="mx-auto max-w-6xl px-4 py-8">
         <Outlet />
       </main>
     </div>

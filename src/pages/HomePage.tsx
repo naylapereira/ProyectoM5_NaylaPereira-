@@ -4,6 +4,8 @@ import ProductList from "../features/products/components/ProductList";
 import { useProducts } from "../features/products/hooks/useProducts";
 import { filterProducts } from "../features/products/utils/filterProducts";
 import { useDebounce } from "../features/products/hooks/useDebounce";
+import LoadingState from "../components/LoadingState";
+import ErrorState from "../components/ErrorState";
 
 function HomePage() {
   const { products, loading, error } = useProducts();
@@ -22,16 +24,24 @@ function HomePage() {
   );
 
   if (loading) {
-    return <p>Cargando productos...</p>;
+    return <LoadingState message="Cargando productos..." />;
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return <ErrorState message={error} />;
   }
 
   return (
-    <section>
-      <h2>Productos para mascotas</h2>
+    <section className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold text-stone-900">
+          Productos para mascotas
+        </h2>
+
+        <p className="mt-1 text-sm text-stone-600">
+          Encontrá todo lo que necesitan tus compañeros de cuatro patas.
+        </p>
+      </div>
 
       <ProductFilters
         search={search}

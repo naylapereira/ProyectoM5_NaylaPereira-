@@ -1,39 +1,54 @@
 import { Link } from "react-router-dom";
+import OrderCard from "../features/orders/components/OrderCard";
 import { useAuth } from "../features/auth/hooks/useAuth";
 import { useUserOrders } from "../features/orders/hooks/useUserOrders";
-import { getOrderStatusLabel } from "../features/orders/utils/getOrderStatusLabel";
+import LoadingState from "../components/LoadingState";
+import ErrorState from "../components/ErrorState";
 
 function OrdersPage() {
   const { user } = useAuth();
   const { orders, loading, error } = useUserOrders(user?.uid ?? "");
 
   if (loading) {
-    return <p>Cargando órdenes...</p>;
+    return <LoadingState message="Cargando órdenes..." />;
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return <ErrorState message={error} />;
   }
 
   if (orders.length === 0) {
-    return <p>Todavía no realizaste ninguna compra.</p>;
+    return (
+      <section className="rounded-2xl border border-amber-200 bg-white p-8 text-center">
+        <h2 className="text-2xl font-bold text-stone-900">
+          Mis órdenes
+        </h2>
+
+        <p className="mt-2 text-stone-600">
+          Todavía no realizaste ninguna compra.
+        </p>
+
+        <Link
+          to="/"
+          className="mt-5 inline-block rounded-lg bg-amber-600 px-4 py-2 font-medium text-white hover:bg-amber-700"
+        >
+          Ir al catálogo
+        </Link>
+      </section>
+    );
   }
 
   return (
-    <section>
-      <h2>Mis órdenes</h2>
+    <section className="space-y-6">
+      <h2 className="text-2xl font-bold text-stone-900">
+        Mis órdenes
+      </h2>
 
-      {orders.map((order) => (
-        <article key={order.id}>
-          <p>Fecha: {order.createdAt.toLocaleDateString()}</p>
-          <p>Estado: {getOrderStatusLabel(order.status)}</p>
-          <p>Total: ${order.total}</p>
-
-          <Link to={`/orders/${order.id}`}>
-            Ver detalle
-          </Link>
-        </article>
-      ))}
+      <div className="space-y-4">
+        {orders.map((order) => (
+          <OrderCard key={order.id} order={order} />
+        ))}
+      </div>
     </section>
   );
 }

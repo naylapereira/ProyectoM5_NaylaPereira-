@@ -6,6 +6,8 @@ import {
   filterOrders,
   type OrderFilter,
 } from "../../features/orders/utils/filterOrders";
+import LoadingState from "../../components/LoadingState";
+import ErrorState from "../../components/ErrorState";
 
 function AdminOrdersPage() {
   const { orders, loading, error, changeStatus } = useAdminOrders();
@@ -17,16 +19,24 @@ function AdminOrdersPage() {
   );
 
   if (loading) {
-    return <p>Cargando órdenes...</p>;
+    return <LoadingState message="Cargando órdenes..." />;
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return <ErrorState message={error} />;
   }
 
   return (
-    <section>
-      <h2>Administrar órdenes</h2>
+    <section className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold text-stone-900">
+          Administrar órdenes
+        </h2>
+
+        <p className="mt-1 text-stone-600">
+          Consultá los pedidos y actualizá su estado.
+        </p>
+      </div>
 
       <OrderStatusFilter
         value={filter}

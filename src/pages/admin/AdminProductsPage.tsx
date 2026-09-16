@@ -1,54 +1,18 @@
-import { useRef , useState } from "react";
+import { useRef } from "react";
+import AdminProductActions from "../../features/products/components/AdminProductActions";
+import AdminProductEditor from "../../features/products/components/AdminProductEditor";
 import AdminProductList from "../../features/products/components/AdminProductList";
-import ProductForm from "../../features/products/components/ProductForm";
-import { useProducts } from "../../features/products/hooks/useProducts";
-import {
-  createProduct,
-  deleteProduct,
-  updateProduct,
-} from "../../features/products/services/adminProductService";
-import type { ProductInput } from "../../features/products/types/productInput";
-import type { Product } from "../../types/product";
+import AdminProductSearch from "../../features/products/components/AdminProductSearch";
+import { useAdminProducts } from "../../features/products/hooks/useAdminProducts";
+import LoadingState from "../../components/LoadingState";
+import ErrorState from "../../components/ErrorState";
 
 function AdminProductsPage() {
-  const [message, setMessage] = useState("");
-  const [editingProduct, setEditingProduct] =
-  useState<Product | null>(null);
-
+  const admin = useAdminProducts();
   const formRef = useRef<HTMLDivElement>(null);
-  
-  const {
-    products,
-    loading,
-    error,
-    refresh,
-  } = useProducts();
 
-  const handleCreate = async (product: ProductInput) => {
-    try {
-      await createProduct(product);
-      await refresh();
-      setMessage("Producto creado correctamente.");
-    } catch {
-      setMessage("No se pudo crear el producto.");
-    }
-  };
-
-  const handleUpdate = async (product: ProductInput) => {
-    if (!editingProduct) return;
-
-    try {
-      await updateProduct(editingProduct.id, product);
-      await refresh();
-      setEditingProduct(null);
-      setMessage("Producto actualizado correctamente.");
-    } catch {
-      setMessage("No se pudo actualizar el producto.");
-    }
-  };
-
-  const handleEdit = (product: Product) => {
-    setEditingProduct(product);
+  const handleEdit = (product: Parameters<typeof admin.setEditingProduct>[0]) => {
+    admin.setEditingProduct(product);
 
     setTimeout(() => {
       formRef.current?.scrollIntoView({
@@ -58,62 +22,79 @@ function AdminProductsPage() {
     }, 0);
   };
 
-  const handleDelete = async (productId: string) => {
-    const confirmed = window.confirm(
-      "¿Seguro que querés eliminar este producto?",
-    );
-
-    if (!confirmed) return;
-
-    try {
-      await deleteProduct(productId);
-      await refresh();
-      setMessage("Producto eliminado correctamente.");
-    } catch {
-      setMessage("No se pudo eliminar el producto.");
-    }
-  };
-
   return (
-    <section>
-      <h2>Administrar productos</h2>
-
-      <div ref={formRef}>
-        <h3>
-          {editingProduct ? "Editar producto" : "Nuevo producto"}
-        </h3>
-  
-        <ProductForm
-          key={editingProduct?.id ?? "new"}
-          initialValues={editingProduct ?? undefined}
-          submitLabel={
-            editingProduct ? "Guardar cambios" : "Crear producto"
-          }
-          onSubmit={
-            editingProduct ? handleUpdate : handleCreate
-          }
-        />
-
-        {editingProduct && (
-          <button
-            type="button"
-            onClick={() => setEditingProduct(null)}
-          >
-            Cancelar edición
-          </button>
-        )}
+    <section className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold text-stone-900">
+          Administrar productos
+        </h2>
+        <p className="mt-1 text-stone-600">
+          Gestioná los productos disponibles en la tienda.
+        </p>
       </div>
 
-      {message && <p>{message}</p>}
+      <AdminProductActions
+        onCreate={() => {
+          admin.setMode("create");
+          admin.setEditingProduct(null);
+          admin.setMessage("");
+        }}
+        onEdit={() => {
+          admin.setMode("edit");
+          admin.setEditingProduct(null);
+          admin.setMessage("");
+        }}
+      />
 
-      {loading && <p>Cargando productos...</p>}
-      {error && <p>{error}</p>}
-      {!loading && !error && (
-        <AdminProductList
-          products={products}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+      {admin.mode === "create" && (
+        <div ref={formRef}>
+          <AdminProductEditor
+            product={null}
+            onSubmit={admin.create}
+            onCancel={() => admin.setMode(null)}
+          />
+        </div>
+      )}
+
+      {admin.mode === "edit" && (
+        <div className="space-y-5">
+          {admin.editingProduct && (
+            <div ref={formRef}>
+              <AdminProductEditor
+                product={admin.editingProduct}
+                onSubmit={admin.update}
+                onCancel={() => admin.setEditingProduct(null)}
+              />
+            </div>
+          )}
+
+          <AdminProductSearch
+            value={admin.search}
+            onChange={admin.setSearch}
+          />
+
+          {admin.loading && (
+            <LoadingState message="Cargando productos..." />
+          )}
+
+          {admin.error && (
+            <ErrorState message={admin.error} />
+          )}
+
+          {!admin.loading && !admin.error && (
+            <AdminProductList
+              products={admin.filteredProducts}
+              onEdit={handleEdit}
+              onDelete={admin.remove}
+            />
+          )}
+        </div>
+      )}
+
+      {admin.message && (
+        <p className="rounded-xl bg-amber-50 p-3 text-sm font-medium text-amber-800">
+          {admin.message}
+        </p>
       )}
     </section>
   );

@@ -10,6 +10,10 @@ export const addItem = (
   );
 
   if (existingItem) {
+    if (existingItem.quantity >= product.stock) {
+      return state;
+    }
+
     return {
       ...state,
       items: state.items.map((item) =>
@@ -18,6 +22,10 @@ export const addItem = (
           : item,
       ),
     };
+  }
+
+  if (product.stock <= 0) {
+    return state;
   }
 
   return {
@@ -49,7 +57,10 @@ export const updateQuantity = (
     ...state,
     items: state.items.map((item) =>
       item.product.id === productId
-        ? { ...item, quantity }
+        ? {
+            ...item,
+            quantity: Math.min(quantity, item.product.stock),
+          }
         : item,
     ),
   };

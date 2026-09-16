@@ -14,11 +14,15 @@ function AdminOrderList({
   onStatusChange,
 }: AdminOrderListProps) {
   if (orders.length === 0) {
-    return <p>No hay órdenes para mostrar.</p>;
+    return (
+      <p className="rounded-xl bg-white p-6 text-center text-stone-600">
+        No hay órdenes para mostrar.
+      </p>
+    );
   }
 
   return (
-    <section>
+    <section className="grid gap-4 lg:grid-cols-2">
       {orders.map((order) => (
         <AdminOrderCard
           key={order.id}

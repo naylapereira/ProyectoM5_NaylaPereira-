@@ -8,6 +8,7 @@ interface ProductFormProps {
   initialValues?: ProductInput;
   submitLabel: string;
   onSubmit: (product: ProductInput) => Promise<void>;
+  resetAfterSubmit?: boolean;
 }
 
 const emptyProduct: ProductInput = {
@@ -23,15 +24,17 @@ function ProductForm({
   initialValues = emptyProduct,
   submitLabel,
   onSubmit,
+  resetAfterSubmit = false,
 }: ProductFormProps) {
   const [product, setProduct] = useState(initialValues);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const [imageFile, setImageFile] = useState<File | null>(null);
-
-
-  const handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const form = event.currentTarget;
+
     setLoading(true);
 
     try {
@@ -39,21 +42,23 @@ function ProductForm({
 
       if (imageFile) {
         const imageUrl = await uploadProductImage(imageFile);
- 
-        productToSave = {
-          ...product,
-          imageUrl,
-        };
+        productToSave = { ...product, imageUrl };
       }
 
       await onSubmit(productToSave);
+
+      if (resetAfterSubmit) {
+        setProduct(emptyProduct);
+        setImageFile(null);
+        form.reset();
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="space-y-5">
       <ProductFields
         product={product}
         setProduct={setProduct}
@@ -61,7 +66,11 @@ function ProductForm({
 
       <ProductImageField onChange={setImageFile} />
 
-      <button type="submit" disabled={loading}>
+      <button
+        type="submit"
+        disabled={loading}
+        className="cursor-pointer rounded-lg bg-amber-600 px-5 py-3 font-medium text-white hover:bg-amber-700 disabled:cursor-not-allowed disabled:bg-stone-300"
+      >
         {loading ? "Guardando..." : submitLabel}
       </button>
     </form>
